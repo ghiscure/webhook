@@ -31,8 +31,7 @@ const
   body_parser = require('body-parser'),
   app = express().use(body_parser.json()); // creates express http server
 
-// Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+
 
 // Accepts POST requests at /webhook endpoint
 app.post('/webhook', (req, res) => {  
@@ -79,6 +78,7 @@ app.get('/webhook', (req, res) => {
   
   /** UPDATE YOUR VERIFY TOKEN **/
   const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+
   
   // Parse params from the webhook verification request
   let mode = req.query['hub.mode'];
@@ -104,7 +104,6 @@ app.get('/webhook', (req, res) => {
 
 function handleMessage(sender_psid, received_message) {
   let response;
-  
   // Checks if the message contains text
   if (received_message.text) {    
     // Create the payload for a basic text message, which
@@ -112,35 +111,15 @@ function handleMessage(sender_psid, received_message) {
     response = {
       "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
     }
-  } else if (received_message.attachments) {
+  } 
+  else if (received_message.attachments[0].type=="audio") {
+    console.log('audio')
     // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
     response = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [{
-            "title": "Is this the right picture?",
-            "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
-            "buttons": [
-              {
-                "type": "postback",
-                "title": "Yes!",
-                "payload": "yes",
-              },
-              {
-                "type": "postback",
-                "title": "No!",
-                "payload": "no",
-              }
-            ],
-          }]
-        }
-      }
+      "text": `audio message`
     }
-  } 
+  }
   
   // Send the response message
   callSendAPI(sender_psid, response);    
@@ -185,3 +164,6 @@ function callSendAPI(sender_psid, response) {
     }
   }); 
 }
+// Sets server port and logs message on success
+var PORT = process.env.PORT || 1337
+app.listen(PORT, () => console.log(`webhook is listening on port ${PORT}`));
