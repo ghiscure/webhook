@@ -2,7 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
-
+*.mp3
+*.mp4
+convert.js
 package-lock.json
 ### Node ###
 # Logs

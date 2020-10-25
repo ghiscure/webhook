@@ -23,14 +23,13 @@
 require('dotenv').config()
 
 'use strict';
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 // Imports dependencies and set up http server
 const 
-  request = require('request'),
   express = require('express'),
   body_parser = require('body-parser'),
   app = express().use(body_parser.json()); // creates express http server
 
+const {handleMessage, handlePostback} = require('./handler/messages')
 
 
 // Accepts POST requests at /webhook endpoint
@@ -102,68 +101,6 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function handleMessage(sender_psid, received_message) {
-  let response;
-  // Checks if the message contains text
-  if (received_message.text) {    
-    // Create the payload for a basic text message, which
-    // will be added to the body of our request to the Send API
-    response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
-    }
-  } 
-  else if (received_message.attachments[0].type=="audio") {
-    console.log('audio')
-    // Get the URL of the message attachment
-    let attachment_url = received_message.attachments[0].payload.url;
-    response = {
-      "text": `audio message`
-    }
-  }
-  
-  // Send the response message
-  callSendAPI(sender_psid, response);    
-}
-
-function handlePostback(sender_psid, received_postback) {
-  console.log('ok')
-   let response;
-  // Get the payload for the postback
-  let payload = received_postback.payload;
-
-  // Set the response based on the postback payload
-  if (payload === 'yes') {
-    response = { "text": "Thanks!" }
-  } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
-  }
-  // Send the message to acknowledge the postback
-  callSendAPI(sender_psid, response);
-}
-
-function callSendAPI(sender_psid, response) {
-  // Construct the message body
-  let request_body = {
-    "recipient": {
-      "id": sender_psid
-    },
-    "message": response
-  }
-
-  // Send the HTTP request to the Messenger Platform
-  request({
-    "uri": "https://graph.facebook.com/v8.0/me/messages",
-    "qs": { "access_token": PAGE_ACCESS_TOKEN },
-    "method": "POST",
-    "json": request_body
-  }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
-    } else {
-      console.error("Unable to send message:" + err);
-    }
-  }); 
-}
 // Sets server port and logs message on success
 var PORT = process.env.PORT || 1337
 app.listen(PORT, () => console.log(`webhook is listening on port ${PORT}`));
