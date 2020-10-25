@@ -6,7 +6,6 @@ const mqtt = require("mqtt");
 const listen = mqtt.connect("mqtt://test.mosquitto.org");
 const ffmpeg = require ('fluent-ffmpeg')
 const fs = require('fs');
-const { RSA_NO_PADDING, SSL_OP_NETSCAPE_CA_DN_BUG } = require('constants');
 const fetch = require('node-fetch');
 
 
@@ -65,63 +64,8 @@ module.exports = {
        }else{
        listen.publish(topic, "0");
        console.log(`${result[0][0]}, ${topic}`);
-       }
-     
-      
-     
-      // request.get(options,async function (error, response, body) {
-      //       if (!error && response.statusCode == 200) {
-      //         console.log(body)
-      //         fs.writeFile('audio.mp4', body, async function (err) {
-      //           if (err) console.log(err);
-      //           console.log('save voice notes success');
-
-                
-      //           mp4 = './audio.mp4'
-      //           mp3 = './audio.mp3'
-
-      //           proc = new ffmpeg({source:mp4})
-      //           proc.setFfmpegPath('ffmpeg')
-      //           result = await proc.saveToFile(mp3,  function(stdout, stderr){
-      //             return "success"
-      //           })
-      //         console.log('next')
-      //         var mimetype_ = "audio/mpeg3"
-      //         var readStream = fs.createReadStream("audio.mp3")
-      //         var result = await getMessagefromAudio(readStream, mimetype_)
-      //         console.log(result)
-      //         var caps= `turning ${result[0][0]} the ${result[1][0]}`
-      //         console.log(caps)
-      //         // client.sendText(from, caps)
-      //         if(result[0][0]=='on'){
-      //           listen.publish(topic, "1");
-      //           console.log(`${result[0][0]}, ${topic}`);
-      //           }else{
-      //           listen.publish(topic, "0");
-      //           console.log(`${result[0][0]}, ${topic}`);
-      //           }
-              
-              
-
-                
-
-
-
-      //         });
-                
-                            
-                        
-
-      //       }
-      //   });
-      response = {
-        "text": `audio message`
-      }
+       }     
     }
-
-    // Send the response message
-    // callSendAPI(sender_psid, response);    
-    
   },
 
   handlePostback: async function(sender_psid, received_postback) {
